@@ -12,10 +12,16 @@ var flipster = (function(){
   var _root = 'https://widgets.ebscohost.com/prod/encryptedkey/eit/eit.php?t=themes%2Fflipster_carousel_slick%2Fxsl.php%3Fcss%3D%2F%2Fimageserver.ebscohost.com%2Fbranding%2FFlipsterCarousel%2Fcss%2Fslick-app-theme_big.css&q=http%3A%2F%2Fwidgets.ebscohost.com%2Fprod%2Fencryptedkey%2Fehis%2Fwidget.php%3Fprof%3DYOUR-STUFF-HERE',
       _query,
       _db = '%26db%3Deon',
-      _number = '%26numrec%3D50',
       _format = '%26format%3Dxml%26protect%3Dno%26removeehis%3D1%26pl%3D1%26smode%3D%26forcehttp%3D',
       _proxy = '%26proxy%3D',
-      _covers, _scroll, _scrollSpeed, _autoScroll, _dots;
+      settings = {
+        'auto' : '0', // whether the carousel auto-plays. 0 = false, 1 = true
+        'dots' : '0',
+        'count'  : '50', // total number of records to be fetched
+        'covers' : '5', // how many covers show at a glance
+        'scroll' : '5', // covers to scroll past at a given time
+        'scrollSpeed' : '0' // auto-scroll speed, if enabled, in milliseconds
+      };
 
   /**
    * Creates and appends the Flipster <iframe> to either
@@ -37,56 +43,32 @@ var flipster = (function(){
    */
   function _getWidgetUrl() {
 
-    var url = _root + _db + _number + _format + _proxy + '%26rcounturl%3D&h=&settings=' + _covers + ',' + _scroll + ',' +_autoScroll + ',' + _scrollSpeed + ',' + _dots;
+    var url = _root + _db + '%26numrec%3D' + settings.count + _format + _proxy + '%26rcounturl%3D&h=&settings=' + settings.covers + ',' + settings.scroll + ',' + settings.auto + ',' + settings.scrollSpeed + ',' + settings.dots;
     return url;
 
   }
 
-  /**
-   * Number of covers to show within a single view.
-   *
-   * @string number
-   */
-  function _setCovers( number ) {
-    _covers = ( number ? number : '5' );
-  }
-
-  /**
-   * Determines how many magazines scroll at
-   * a given time.
-   *
-   * @string number
-   */
-  function _setScroll( number ) {
-    _scroll = ( number ? number : '5' );
-  }
-
-  /**
-   * Disable or enable autoscroll.
-   */
-  function _setAutoScroll( boolean ) {
-    _autoScroll = ( boolean ? booean : '0' );
-  }
-
-  function _setScrollSpeed( milliseconds ) {
-    _scrollSpeed = ( milliseconds ? milliseconds : '0' );
-  }
-
-  function _setDots( boolean ) {
-    _dots = ( boolean ? boolean : '0' );
-  }
 
   function _setProxy( url ) {
     _proxy = ( url ? '%26proxy%3D' + url : _proxy );
   }
 
+  /**
+   * @array issns
+   */
+  function _setQuery( issns ) {
+    // + '%252BAND%252B(IS%252B0015-6914%252BOR%252BIS%252B0035-791X)'
+  }
+
   function init( selector, options ) {
+
+    for ( var property in options ) {
+      if ( options.hasOwnProperty( property ) ) {
+        settings[ property ] = options[ property ];
+      }
+    }
+
     _setProxy();
-    _setCovers();
-    _setScroll();
-    _setAutoScroll();
-    _setScrollSpeed();
-    _setDots();
     _createIframe( selector );
   }
 
